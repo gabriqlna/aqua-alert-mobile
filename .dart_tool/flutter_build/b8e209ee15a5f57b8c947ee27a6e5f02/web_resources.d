@@ -1,0 +1,1 @@
+ build/web/manifest.json build/web/icons/.gitkeep:  /home/runner/workspace/mobile/web/index.html /home/runner/workspace/mobile/web/manifest.json /home/runner/workspace/mobile/web/icons/.gitkeep
