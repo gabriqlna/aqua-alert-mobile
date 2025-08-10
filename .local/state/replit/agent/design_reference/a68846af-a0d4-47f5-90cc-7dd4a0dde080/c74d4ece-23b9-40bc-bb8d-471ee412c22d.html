@@ -1,0 +1,464 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaAlert - Monitoramento de Água Nova Cruz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'water-available': '#A5D6A7',
+                        'water-unavailable': '#EF9A9A', 
+                        'water-maintenance': '#FFCC80',
+                        'primary': '#1976D2',
+                        'surface': '#FAFAFA'
+                    },
+                    fontFamily: {
+                        'roboto': ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="bg-surface font-roboto">
+    
+    <!-- @COMPONENT: AppContainer [main container with navigation state] -->
+    <div class="max-w-md mx-auto bg-white min-h-screen relative shadow-xl">
+        
+        <!-- @COMPONENT: Header [top app bar with title and status] -->
+        <header class="bg-primary text-white p-4 shadow-md">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-medium">AquaAlert</h1>
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">location_on</span>
+                    <span class="text-sm">Nova Cruz</span>
+                </div>
+            </div>
+            <!-- @STATE: currentCityStatus:string = "calculated_from_neighborhoods" -->
+            <div class="mt-2 p-3 rounded-lg bg-white/10 backdrop-blur-sm">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-water-unavailable" data-bind="cityStatus.color"></div>
+                    <span class="text-sm font-medium" data-bind="cityStatus.text">Sem água</span>
+                </div>
+                <p class="text-xs mt-1 opacity-90">Status geral da cidade</p>
+            </div>
+        </header>
+
+        <!-- @COMPONENT: MainContent [tabbed content area] -->
+        <main class="pb-20">
+            
+            <!-- @COMPONENT: DashboardView [home screen with recent alerts] -->
+            <div id="dashboard-view" class="p-4 space-y-4">
+                
+                <!-- Quick Actions Grid -->
+                <div class="grid grid-cols-3 gap-3">
+                    <button class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col items-center space-y-2 hover:shadow-md transition-shadow" data-event="click:navigateToMap">
+                        <span class="material-icons text-primary text-2xl">map</span>
+                        <span class="text-xs font-medium text-gray-700">Mapa</span>
+                    </button>
+                    <button class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col items-center space-y-2 hover:shadow-md transition-shadow" data-event="click:navigateToReport">
+                        <span class="material-icons text-primary text-2xl">report_problem</span>
+                        <span class="text-xs font-medium text-gray-700">Denúncia</span>
+                    </button>
+                    <button class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col items-center space-y-2 hover:shadow-md transition-shadow" data-event="click:navigateToAdmin">
+                        <span class="material-icons text-primary text-2xl">admin_panel_settings</span>
+                        <span class="text-xs font-medium text-gray-700">Admin</span>
+                    </button>
+                </div>
+
+                <!-- Recent Alerts Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-4 border-b border-gray-100">
+                        <h2 class="text-lg font-medium text-gray-900">Alertas Recentes</h2>
+                        <p class="text-sm text-gray-600">Últimas 10 denúncias</p>
+                    </div>
+                    
+                    <!-- @MAP: recentAlerts.slice(0, 10).map(alert => ( -->
+                    <div class="divide-y divide-gray-100">
+                        <div class="p-4 flex items-start space-x-3" data-mock="true">
+                            <div class="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-900" data-bind="alert.message">Falta de água no Bairro Norte há 3 dias</p>
+                                <p class="text-xs text-gray-500 mt-1" data-bind="alert.formattedTime">Há 2 horas</p>
+                            </div>
+                        </div>
+                        <div class="p-4 flex items-start space-x-3" data-mock="true">
+                            <div class="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-900">Manutenção programada no Bairro Sul</p>
+                                <p class="text-xs text-gray-500 mt-1">Há 5 horas</p>
+                            </div>
+                        </div>
+                        <div class="p-4 flex items-start space-x-3" data-mock="true">
+                            <div class="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-900">Pressão baixa relatada no Centro</p>
+                                <p class="text-xs text-gray-500 mt-1">Há 1 dia</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+
+            <!-- @COMPONENT: MapView [neighborhood grid with status colors] -->
+            <div id="map-view" class="p-4 space-y-4 hidden">
+                
+                <!-- Status Legend -->
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Legenda</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 rounded bg-water-available"></div>
+                            <span class="text-sm text-gray-700">Água disponível</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 rounded bg-water-unavailable"></div>
+                            <span class="text-sm text-gray-700">Sem água</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 rounded bg-water-maintenance"></div>
+                            <span class="text-sm text-gray-700">Manutenção</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neighborhoods Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- @MAP: neighborhoods.map(neighborhood => ( -->
+                    <div class="rounded-xl p-4 shadow-sm border border-gray-100 bg-water-available" data-mock="true" data-bind="neighborhood.status">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="material-icons text-sm text-gray-700">location_city</span>
+                            <span class="text-sm font-medium text-gray-900" data-bind="neighborhood.name">Centro</span>
+                        </div>
+                        <p class="text-xs text-gray-600">Água disponível</p>
+                    </div>
+                    <div class="rounded-xl p-4 shadow-sm border border-gray-100 bg-water-unavailable" data-mock="true">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="material-icons text-sm text-gray-700">location_city</span>
+                            <span class="text-sm font-medium text-gray-900">Bairro Norte</span>
+                        </div>
+                        <p class="text-xs text-gray-600">Sem água</p>
+                    </div>
+                    <div class="rounded-xl p-4 shadow-sm border border-gray-100 bg-water-maintenance" data-mock="true">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="material-icons text-sm text-gray-700">location_city</span>
+                            <span class="text-sm font-medium text-gray-900">Bairro Sul</span>
+                        </div>
+                        <p class="text-xs text-gray-600">Manutenção</p>
+                    </div>
+                    <div class="rounded-xl p-4 shadow-sm border border-gray-100 bg-water-available" data-mock="true">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="material-icons text-sm text-gray-700">location_city</span>
+                            <span class="text-sm font-medium text-gray-900">Zona Rural</span>
+                        </div>
+                        <p class="text-xs text-gray-600">Água disponível</p>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+
+            <!-- @COMPONENT: ReportView [complaint form] -->
+            <div id="report-view" class="p-4 space-y-4 hidden">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-medium text-gray-900 mb-6">Nova Denúncia</h2>
+                    
+                    <form class="space-y-4" data-event="submit:handleReportSubmit">
+                        <!-- Neighborhood Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Bairro</label>
+                            <div class="relative">
+                                <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white" data-implementation="Should populate from neighborhoods list">
+                                    <option value="">Selecione o bairro</option>
+                                    <option value="centro" data-mock="true">Centro</option>
+                                    <option value="norte" data-mock="true">Bairro Norte</option>
+                                    <option value="sul" data-mock="true">Bairro Sul</option>
+                                    <option value="rural" data-mock="true">Zona Rural</option>
+                                </select>
+                                <span class="material-icons absolute right-3 top-3 text-gray-400 pointer-events-none">expand_more</span>
+                            </div>
+                            <p class="text-xs text-red-500 mt-1 hidden" id="neighborhood-error">Selecione um bairro</p>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descrição do problema</label>
+                            <textarea 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none" 
+                                rows="4" 
+                                placeholder="Descreva o problema com o fornecimento de água..."
+                                data-implementation="Should validate minimum length and required field"
+                            ></textarea>
+                            <p class="text-xs text-red-500 mt-1 hidden" id="description-error">Descreva o problema</p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button 
+                            type="submit" 
+                            class="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+                            data-event="click:validateAndSubmitReport"
+                        >
+                            Enviar Denúncia
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: AdminView [status management panel] -->
+            <div id="admin-view" class="p-4 space-y-4 hidden">
+                
+                <!-- Admin Header -->
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <span class="material-icons text-primary">admin_panel_settings</span>
+                        <h2 class="text-lg font-medium text-gray-900">Painel Administrativo</h2>
+                    </div>
+                    <p class="text-sm text-gray-600">Altere o status dos bairros</p>
+                </div>
+
+                <!-- Neighborhood Status Controls -->
+                <div class="space-y-3">
+                    <!-- @MAP: neighborhoods.map(neighborhood => ( -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100" data-mock="true">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 rounded bg-water-available" data-bind="neighborhood.statusColor"></div>
+                                <span class="font-medium text-gray-900" data-bind="neighborhood.name">Centro</span>
+                            </div>
+                            <div class="relative">
+                                <select class="p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white pr-8" data-event="change:updateNeighborhoodStatus" data-implementation="Should update global state">
+                                    <option value="available" selected>Disponível</option>
+                                    <option value="unavailable">Sem água</option>
+                                    <option value="maintenance">Manutenção</option>
+                                </select>
+                                <span class="material-icons absolute right-2 top-2 text-gray-400 pointer-events-none text-sm">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100" data-mock="true">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 rounded bg-water-unavailable"></div>
+                                <span class="font-medium text-gray-900">Bairro Norte</span>
+                            </div>
+                            <div class="relative">
+                                <select class="p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white pr-8">
+                                    <option value="available">Disponível</option>
+                                    <option value="unavailable" selected>Sem água</option>
+                                    <option value="maintenance">Manutenção</option>
+                                </select>
+                                <span class="material-icons absolute right-2 top-2 text-gray-400 pointer-events-none text-sm">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100" data-mock="true">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 rounded bg-water-maintenance"></div>
+                                <span class="font-medium text-gray-900">Bairro Sul</span>
+                            </div>
+                            <div class="relative">
+                                <select class="p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white pr-8">
+                                    <option value="available">Disponível</option>
+                                    <option value="unavailable">Sem água</option>
+                                    <option value="maintenance" selected>Manutenção</option>
+                                </select>
+                                <span class="material-icons absolute right-2 top-2 text-gray-400 pointer-events-none text-sm">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100" data-mock="true">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 rounded bg-water-available"></div>
+                                <span class="font-medium text-gray-900">Zona Rural</span>
+                            </div>
+                            <div class="relative">
+                                <select class="p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white pr-8">
+                                    <option value="available" selected>Disponível</option>
+                                    <option value="unavailable">Sem água</option>
+                                    <option value="maintenance">Manutenção</option>
+                                </select>
+                                <span class="material-icons absolute right-2 top-2 text-gray-400 pointer-events-none text-sm">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+
+        </main>
+
+        <!-- @COMPONENT: BottomNavigation [bottom tab navigation] -->
+        <nav class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 px-4 py-2">
+            <div class="flex justify-around">
+                <button class="flex flex-col items-center py-2 px-3 text-primary" data-event="click:showDashboard" id="nav-dashboard">
+                    <span class="material-icons text-xl">dashboard</span>
+                    <span class="text-xs mt-1">Início</span>
+                </button>
+                <button class="flex flex-col items-center py-2 px-3 text-gray-500" data-event="click:showMap" id="nav-map">
+                    <span class="material-icons text-xl">map</span>
+                    <span class="text-xs mt-1">Mapa</span>
+                </button>
+                <button class="flex flex-col items-center py-2 px-3 text-gray-500" data-event="click:showReport" id="nav-report">
+                    <span class="material-icons text-xl">report_problem</span>
+                    <span class="text-xs mt-1">Denúncia</span>
+                </button>
+                <button class="flex flex-col items-center py-2 px-3 text-gray-500" data-event="click:showAdmin" id="nav-admin">
+                    <span class="material-icons text-xl">admin_panel_settings</span>
+                    <span class="text-xs mt-1">Admin</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- @COMPONENT: FloatingActionButton [quick access to reports] -->
+        <button class="fixed bottom-20 right-6 w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center text-white hover:bg-blue-700 transition-colors" data-event="click:quickReport">
+            <span class="material-icons">add</span>
+        </button>
+
+        <!-- @COMPONENT: Toast [success/error notifications] -->
+        <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg hidden z-50" data-implementation="Should show/hide based on app state">
+            <div class="flex items-center space-x-2">
+                <span class="material-icons text-sm">check_circle</span>
+                <span class="text-sm">Denúncia enviada com sucesso!</span>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AppContainer -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        // This would typically be handled by ViewModels and LiveData in Android MVVM architecture
+        
+        (function() {
+            'use strict';
+            
+            // Mock data representing the Repository pattern
+            const mockData = {
+                neighborhoods: [
+                    { name: 'Centro', status: 'available' },
+                    { name: 'Bairro Norte', status: 'unavailable' },
+                    { name: 'Bairro Sul', status: 'maintenance' },
+                    { name: 'Zona Rural', status: 'available' }
+                ],
+                alerts: [
+                    { message: 'Falta de água no Bairro Norte há 3 dias', timestamp: Date.now() - 2 * 60 * 60 * 1000 },
+                    { message: 'Manutenção programada no Bairro Sul', timestamp: Date.now() - 5 * 60 * 60 * 1000 },
+                    { message: 'Pressão baixa relatada no Centro', timestamp: Date.now() - 24 * 60 * 60 * 1000 }
+                ]
+            };
+
+            // Navigation state management (simulates ViewModel + LiveData)
+            let currentView = 'dashboard';
+            const views = ['dashboard', 'map', 'report', 'admin'];
+            
+            function showView(viewName) {
+                // Hide all views
+                views.forEach(view => {
+                    document.getElementById(`${view}-view`).classList.add('hidden');
+                    document.getElementById(`nav-${view}`).classList.remove('text-primary');
+                    document.getElementById(`nav-${view}`).classList.add('text-gray-500');
+                });
+                
+                // Show selected view
+                document.getElementById(`${viewName}-view`).classList.remove('hidden');
+                document.getElementById(`nav-${viewName}`).classList.add('text-primary');
+                document.getElementById(`nav-${viewName}`).classList.remove('text-gray-500');
+                
+                currentView = viewName;
+            }
+
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const bgColor = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+                toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50`;
+                toast.querySelector('span:last-child').textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+
+            // Navigation event listeners
+            document.getElementById('nav-dashboard').addEventListener('click', () => showView('dashboard'));
+            document.getElementById('nav-map').addEventListener('click', () => showView('map'));
+            document.getElementById('nav-report').addEventListener('click', () => showView('report'));
+            document.getElementById('nav-admin').addEventListener('click', () => showView('admin'));
+
+            // Quick access buttons
+            document.querySelectorAll('[data-event*="navigateToMap"]').forEach(btn => {
+                btn.addEventListener('click', () => showView('map'));
+            });
+            document.querySelectorAll('[data-event*="navigateToReport"]').forEach(btn => {
+                btn.addEventListener('click', () => showView('report'));
+            });
+            document.querySelectorAll('[data-event*="navigateToAdmin"]').forEach(btn => {
+                btn.addEventListener('click', () => showView('admin'));
+            });
+
+            // Form validation and submission
+            const reportForm = document.querySelector('#report-view form');
+            if (reportForm) {
+                reportForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const neighborhood = this.querySelector('select').value;
+                    const description = this.querySelector('textarea').value.trim();
+                    
+                    // Reset previous errors
+                    document.getElementById('neighborhood-error').classList.add('hidden');
+                    document.getElementById('description-error').classList.add('hidden');
+                    
+                    let isValid = true;
+                    
+                    if (!neighborhood) {
+                        document.getElementById('neighborhood-error').classList.remove('hidden');
+                        isValid = false;
+                    }
+                    
+                    if (!description || description.length < 10) {
+                        document.getElementById('description-error').classList.remove('hidden');
+                        document.getElementById('description-error').textContent = description.length === 0 ? 'Descreva o problema' : 'Descrição muito curta (mínimo 10 caracteres)';
+                        isValid = false;
+                    }
+                    
+                    if (isValid) {
+                        // Simulate adding to alerts list
+                        showToast('Denúncia enviada com sucesso!');
+                        this.reset();
+                        showView('dashboard');
+                    }
+                });
+            }
+
+            // Admin status change handlers
+            document.querySelectorAll('#admin-view select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const statusColors = {
+                        'available': 'bg-water-available',
+                        'unavailable': 'bg-water-unavailable', 
+                        'maintenance': 'bg-water-maintenance'
+                    };
+                    
+                    const colorDiv = this.closest('.bg-white').querySelector('.w-4.h-4');
+                    colorDiv.className = `w-4 h-4 rounded ${statusColors[this.value]}`;
+                    
+                    showToast('Status do bairro atualizado!');
+                });
+            });
+
+            // Initialize with dashboard view
+            showView('dashboard');
+        })();
+    </script>
+</body>
+</html>
