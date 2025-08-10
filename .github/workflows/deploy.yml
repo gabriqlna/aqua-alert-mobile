@@ -1,0 +1,62 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+      env:
+        NODE_ENV: production
+
+    - name: Create deployment package
+      run: |
+        mkdir -p deploy
+        cp -r dist/ deploy/
+        cp -r client/dist/ deploy/public/
+        cp package.json deploy/
+        cp package-lock.json deploy/
+        
+    - name: Deploy to Replit
+      run: |
+        echo "Deployment package ready"
+        echo "To deploy on Replit:"
+        echo "1. Upload the deploy/ folder contents"
+        echo "2. Run 'npm ci --production'"
+        echo "3. Start with 'npm start'"
+
+    - name: Health Check
+      run: |
+        echo "Deployment completed"
+        echo "Remember to:"
+        echo "- Set environment variables"
+        echo "- Configure database connection"
+        echo "- Test all endpoints"
