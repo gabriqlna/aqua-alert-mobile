@@ -1,4 +1,8 @@
 import { Map, AlertTriangle, Settings } from 'lucide-react';
+import WaterIcon from '@/components/icons/WaterIcon';
+import MapIcon from '@/components/icons/MapIcon';
+import AlertIcon from '@/components/icons/AlertIcon';
+import AdminIcon from '@/components/icons/AdminIcon';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useNeighborhoods } from '@/hooks/useNeighborhoods';
 import { formatTimeAgo } from '@/lib/types';
@@ -35,21 +39,21 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           onClick={() => onNavigate('map')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col items-center space-y-2 hover:shadow-md transition-shadow"
         >
-          <Map className="text-primary w-6 h-6" />
+          <MapIcon className="text-primary w-6 h-6" />
           <span className="text-xs font-medium text-gray-700">Mapa</span>
         </button>
         <button
           onClick={() => onNavigate('report')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col items-center space-y-2 hover:shadow-md transition-shadow"
         >
-          <AlertTriangle className="text-primary w-6 h-6" />
+          <AlertIcon className="text-primary w-6 h-6" variant="warning" />
           <span className="text-xs font-medium text-gray-700">Denúncia</span>
         </button>
         <button
           onClick={() => onNavigate('admin')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col items-center space-y-2 hover:shadow-md transition-shadow"
         >
-          <Settings className="text-primary w-6 h-6" />
+          <AdminIcon className="text-primary w-6 h-6" />
           <span className="text-xs font-medium text-gray-700">Admin</span>
         </button>
       </div>

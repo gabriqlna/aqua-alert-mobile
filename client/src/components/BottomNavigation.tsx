@@ -1,4 +1,8 @@
 import { Home, Map, AlertTriangle, Settings } from 'lucide-react';
+import HomeIcon from './icons/HomeIcon';
+import MapIcon from './icons/MapIcon';
+import AlertIcon from './icons/AlertIcon';
+import AdminIcon from './icons/AdminIcon';
 
 interface BottomNavigationProps {
   currentView: string;
@@ -7,10 +11,10 @@ interface BottomNavigationProps {
 
 export default function BottomNavigation({ currentView, onNavigate }: BottomNavigationProps) {
   const navItems = [
-    { id: 'dashboard', icon: Home, label: 'Início' },
-    { id: 'map', icon: Map, label: 'Mapa' },
-    { id: 'report', icon: AlertTriangle, label: 'Denúncia' },
-    { id: 'admin', icon: Settings, label: 'Admin' },
+    { id: 'dashboard', icon: HomeIcon, label: 'Início' },
+    { id: 'map', icon: MapIcon, label: 'Mapa' },
+    { id: 'report', icon: AlertIcon, label: 'Denúncia' },
+    { id: 'admin', icon: AdminIcon, label: 'Admin' },
   ];
 
   return (

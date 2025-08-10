@@ -3,6 +3,7 @@ import BottomNavigation from './BottomNavigation';
 import FloatingActionButton from './FloatingActionButton';
 import { useCityStatus } from '@/hooks/useNeighborhoods';
 import { MapPin } from 'lucide-react';
+import type { CityStatus } from '@/lib/types';
 
 interface LayoutProps {
   children: ReactNode;
@@ -28,7 +29,7 @@ export default function Layout({ children, onNavigate, currentView }: LayoutProp
         {!isLoading && cityStatus && (
           <div className="mt-2 p-3 rounded-lg bg-white/10 backdrop-blur-sm">
             <div className="flex items-center space-x-2">
-              <div className={`w-3 h-3 rounded-full ${cityStatus.color}`} />
+              <div className={`w-3 h-3 rounded-full bg-${cityStatus.color}`} />
               <span className="text-sm font-medium">{cityStatus.text}</span>
             </div>
             <p className="text-xs mt-1 opacity-90">Status geral da cidade</p>

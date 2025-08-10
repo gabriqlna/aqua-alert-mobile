@@ -100,7 +100,12 @@ export class MemStorage implements IStorage {
 
   async createAlert(insertAlert: InsertAlert): Promise<Alert> {
     const id = randomUUID();
-    const alert: Alert = { ...insertAlert, id, timestamp: new Date() };
+    const alert: Alert = { 
+      ...insertAlert, 
+      id, 
+      timestamp: new Date(),
+      neighborhoodId: insertAlert.neighborhoodId || null
+    };
     this.alerts.set(id, alert);
     return alert;
   }

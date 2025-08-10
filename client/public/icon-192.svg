@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="96" cy="96" r="96" fill="#1976D2"/>
+  
+  <!-- Water Drop Icon -->
+  <path d="M96 40C96 40 64 72 64 104C64 120.569 78.431 135 96 135C113.569 135 128 120.569 128 104C128 72 96 40 96 40Z" fill="white"/>
+  
+  <!-- Water Waves -->
+  <path d="M48 140C58 136 68 144 78 140C88 136 98 144 108 140C118 136 128 144 138 140" stroke="white" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M52 150C62 146 72 154 82 150C92 146 102 154 112 150C122 146 132 154 142 150" stroke="white" stroke-width="3" stroke-linecap="round" fill="none"/>
+  
+  <!-- City Buildings -->
+  <rect x="36" y="120" width="8" height="20" fill="white" opacity="0.8"/>
+  <rect x="46" y="115" width="6" height="25" fill="white" opacity="0.8"/>
+  <rect x="54" y="125" width="8" height="15" fill="white" opacity="0.8"/>
+  
+  <rect x="130" y="118" width="8" height="22" fill="white" opacity="0.8"/>
+  <rect x="140" y="122" width="6" height="18" fill="white" opacity="0.8"/>
+  <rect x="148" y="116" width="8" height="24" fill="white" opacity="0.8"/>
+</svg>

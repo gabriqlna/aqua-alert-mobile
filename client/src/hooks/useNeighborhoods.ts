@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-import type { Neighborhood, WaterStatus } from '@/lib/types';
+import type { Neighborhood, WaterStatus, CityStatus } from '@/lib/types';
 
 export function useNeighborhoods() {
   return useQuery<Neighborhood[]>({
@@ -24,7 +24,7 @@ export function useUpdateNeighborhoodStatus() {
 }
 
 export function useCityStatus() {
-  return useQuery({
+  return useQuery<CityStatus>({
     queryKey: ['/api/city-status'],
   });
 }

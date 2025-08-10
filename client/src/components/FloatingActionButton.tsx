@@ -1,4 +1,5 @@
 import { Plus } from 'lucide-react';
+import AlertIcon from './icons/AlertIcon';
 
 interface FloatingActionButtonProps {
   onQuickReport: () => void;
